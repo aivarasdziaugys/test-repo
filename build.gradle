@@ -1,12 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.transformers.*
-//buildscript {
-//    repositories {
-//        jcenter()
-//    }
-//    dependencies {
-//        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
-//    }
-//}
 plugins {
     id "java"
     id "maven"
@@ -23,6 +15,7 @@ repositories {
     }
 }
 
+// if location for performance test is not test directory add source set for it.
 //sourceSets{
 //    perf
 //}
@@ -41,10 +34,12 @@ dependencies {
     compile group: 'com.carrotsearch', name: 'junit-benchmarks', version: '0.7.2'
 }
 
+//should add sources from main and test to jar.
 task perfJar(type: Jar, dependsOn: testClasses) {
     from sourceSets.test.output + sourceSets.main.output
 }
 
+//should shadow another jar with benchmark test config.
 task benchmarks(dependsOn: perfJar) {
     apply plugin: 'com.github.johnrengelman.shadow'
     shadowJar {
@@ -76,9 +71,6 @@ task benchmarks(dependsOn: perfJar) {
     }
 }
 
-jmh {
-    includeTests = true
-}
 shadowJar {
     classifier = 'benchmarks'
         exclude 'META-INF/*.SF'
@@ -100,18 +92,6 @@ shadowJar {
         mainClass = "org.openjdk.jmh.Main"
     }
 }
-
-//jmhJar {
-//    append('META-INF/spring.handlers')
-//    append('META-INF/spring.schemas')
-//    exclude 'LICENSE'
-//}
-
-//shadowJar{
-//    baseName "shadow"
-//    classifier null
-//    version null
-//}
 
 group = 'com.example'
 version = 'v1'

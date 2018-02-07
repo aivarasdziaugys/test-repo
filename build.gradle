@@ -44,12 +44,17 @@ task benchmarks(dependsOn: perfJar) {
     apply plugin: 'com.github.johnrengelman.shadow'
     shadowJar {
         classifier = ''
+        baseName 'shadow'
+        version ''
+
+        manifest {
+            attributes 'Main-Class': 'org.openjdk.jmh.Main'
+        }
         exclude 'META-INF/*.SF'
         exclude 'META-INF/*.DSA'
         exclude 'META-INF/*.RSA'
 
-//        mergeServiceFiles()
-        baseName 'shadow'
+        mergeServiceFiles()
         transform(AppendingTransformer) { resource = 'reference.conf'  }
         transform(AppendingTransformer) {
             resource = 'META-INF/spring.handlers'
@@ -59,37 +64,9 @@ task benchmarks(dependsOn: perfJar) {
         }
         transform(AppendingTransformer) { resource = 'META-INF/spring.tooling'  }
         transform(PropertiesFileTransformer) { paths = ['META-INF/spring.factories' ] }
-        transform(ManifestResourceTransformer) {
-            mainClass = "org.openjdk.jmh.Main"
-        }
-        manifest {
-            attributes 'Main-Class': 'org.openjdk.jmh.Main'
-        }
     }
     doLast {
         shadowJar.execute()
-    }
-}
-
-shadowJar {
-    classifier = 'benchmarks'
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-//
-    mergeServiceFiles()
-////        baseName 'shadow'
-    transform(AppendingTransformer) { resource = 'reference.conf'  }
-    transform(AppendingTransformer) {
-        resource = 'META-INF/spring.handlers'
-    }
-    transform(AppendingTransformer) {
-        resource = "META-INF/spring.schemas"
-    }
-    transform(AppendingTransformer) { resource = 'META-INF/spring.tooling'  }
-    transform(PropertiesFileTransformer) { paths = ['META-INF/spring.factories' ] }
-    transform(ManifestResourceTransformer) {
-        mainClass = "org.openjdk.jmh.Main"
     }
 }
 

@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class TestService {
+    private static String listValues = "";
+    private static List<String> stringList = new ArrayList<>();
 
 
     public double testMethod(double x, double y){
@@ -21,6 +23,9 @@ public class TestService {
     }
 
     @Benchmark
+    @Fork(value = 1)
+    @Warmup(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
     public void benchmarkTest(Blackhole bh){
         List<String> strings = new ArrayList<>();
         int i = 0;
@@ -34,6 +39,15 @@ public class TestService {
             strings.remove(r.nextInt(i-20));
             i--;
         }
+        stringList = new ArrayList<>(strings);
         bh.consume(strings);
+    }
+
+    @Benchmark
+    @Fork(value = 1)
+    @Warmup(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+    public void benchmarkTest2(){
+
     }
 }

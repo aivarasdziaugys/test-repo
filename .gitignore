@@ -1,14 +1,14 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Gradle template
 .gradle
-/build/
-
+/build/classes/
+/build/tmp/
+.idea
 # Ignore Gradle GUI config
 gradle-app.setting
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
-!shadow.jar
 
 # Cache of project
 .gradletasknamecache

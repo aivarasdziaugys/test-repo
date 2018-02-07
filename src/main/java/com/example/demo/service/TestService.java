@@ -4,10 +4,7 @@ import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -47,7 +44,20 @@ public class TestService {
     @Fork(value = 1)
     @Warmup(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
-    public void benchmarkTest2(){
-
+    public void benchmarkTest2(Blackhole bh){
+        Map<Integer,String> map = new HashMap<>();
+        Random random = new Random(1000);
+        int counter = 0;
+        while (counter < 1000){
+            String chars = "qwertyuiopasdfghjklzxcvbnm";
+            int charNumber = random.nextInt(50);
+            String randomString = "";
+            for(int i = 0; i<charNumber; i++){
+                randomString.concat(String.valueOf(chars.charAt(random.nextInt(chars.length()))));
+            }
+            map.put(counter,randomString);
+            counter++;
+        }
+        bh.consume(map);
     }
 }

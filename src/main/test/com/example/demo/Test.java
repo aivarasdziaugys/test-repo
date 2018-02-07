@@ -1,37 +1,47 @@
 package com.example.demo;
 
-import com.carrotsearch.junitbenchmarks.BenchmarkOptions;
-import com.carrotsearch.junitbenchmarks.BenchmarkRule;
 import com.example.demo.service.TestService;
-import org.junit.Rule;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.infra.Blackhole;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.openjdk.jmh.annotations.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.xml.ws.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {Main.class})
+@State(Scope.Benchmark)
+@Component
 public class Test{
 
-    @Rule
-    public TestRule benchmarkRule = new BenchmarkRule();
-
-    @Autowired
     private TestService service;
 
-    @org.junit.Test
-    @BenchmarkOptions(warmupRounds = 5,benchmarkRounds = 10)
+    static ConfigurableApplicationContext context;
+
+    @Setup (Level.Trial)
+    public synchronized void  initialize() {
+        try {
+            String args = "";
+            if(context == null) {
+                context = SpringApplication.run(Main.class, args );
+            }
+            service = context.getBean(TestService.class);
+//            System.out.println(service);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Benchmark
+    @Fork(value = 1)
+    @Warmup(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
     public void test(){
 
         List<Integer> list = new ArrayList<>();
@@ -42,7 +52,6 @@ public class Test{
             list.add(rn.nextInt(100));
         }
         list.remove(rn.nextInt(50));
-//        bh.consume(list);
         service.testMethod(2,3);
 
     }

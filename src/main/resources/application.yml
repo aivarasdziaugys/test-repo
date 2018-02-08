@@ -1,1 +1,6 @@
-logging.level.:  INFO
+logging:
+  level:
+   root : warn
+   org.springframework.boot.*: warn
+   com.example.demo.*: warn
+   org.openjdk.*: warn

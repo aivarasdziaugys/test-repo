@@ -40,6 +40,7 @@ public class TestService {
         bh.consume(strings);
     }
 
+    /*logback.xml - for logging*/
     @Benchmark
     @Fork(value = 1)
     @Warmup(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)

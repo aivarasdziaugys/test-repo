@@ -23,12 +23,12 @@ sourceSets {
             srcDirs = ['src']
         }
     }
-    test {
+    jmh {
         java {
-            srcDirs = ['test']
+            srcDirs = ['jmh']
         }
         resources {
-            srcDirs = ['test']
+            srcDirs = ['jmh']
         }
     }
 }
@@ -42,34 +42,26 @@ dependencies {
     }
     compile group: 'org.openjdk.jmh', name: 'jmh-core', version: '1.20'
     compileOnly group: 'org.openjdk.jmh', name: 'jmh-generator-annprocess', version: '1.20'
-    compile "me.champeau.gradle:jmh-gradle-plugin:0.4.5"
-    testCompile group: 'com.carrotsearch', name: 'junit-benchmarks', version: '0.7.2'
     // https://mvnrepository.com/artifact/junit/junit
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
 }
 
 //should add sources from main and test to jar.
-task perfJar(type: Jar, dependsOn: testClasses) {
+task perfJar(type: Jar, dependsOn: jmhClasses) {
 //    from sourceSets.main.output
-    from sourceSets.test.output + sourceSets.main.output
+    from sourceSets.test.output + sourceSets.jmh.output
 }
 
 //should shadow another jar with benchmark test config.
 task benchmarks(dependsOn: perfJar) {
-    apply plugin: 'com.github.johnrengelman.shadow'
     shadowJar {
         classifier = ''
         baseName 'shadow'
         configurations = [project.configurations.testRuntime]
-
         manifest {
             attributes 'Main-Class': 'org.openjdk.jmh.Main'
         }
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-
         mergeServiceFiles()
         transform(AppendingTransformer) { resource = 'reference.conf'  }
         transform(AppendingTransformer) {

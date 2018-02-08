@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.example.demo.service.TestService;
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.Blackhole;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -34,8 +35,11 @@ public class BenchmarkTest {
     @Fork(value = 1)
     @Warmup(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
-    public void test(){
+    public void test(Blackhole bh){
         TestService service = context.getBean(TestService.class);
-        service.testMethod(2,6);
+        bh.consume(service.testMethod(2,6));
+        bh.consume(service.testMethod(2,6));
+        bh.consume(service.testMethod(2,6));
+
     }
 }

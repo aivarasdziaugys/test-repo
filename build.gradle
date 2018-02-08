@@ -50,7 +50,7 @@ dependencies {
 //should add sources from main and test to jar.
 task perfJar(type: Jar, dependsOn: jmhClasses) {
 //    from sourceSets.main.output
-    from sourceSets.test.output + sourceSets.jmh.output
+    from sourceSets.jmh.output
 }
 
 //should shadow another jar with benchmark test config.
